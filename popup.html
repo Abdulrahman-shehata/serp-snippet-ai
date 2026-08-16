@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>SERP Snippet AI</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand-mark" aria-hidden="true">
+          <img src="icons/icon-128.png" alt="">
+        </div>
+        <div class="brand-copy">
+          <h1>SERP Snippet AI</h1>
+          <p class="brand-subtitle">AI-powered SERP snippet builder</p>
+          <p class="brand-author">
+            By
+            <a
+              href="https://www.linkedin.com/in/abdulrahman-shehata-83227516a/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Abdulrahman Shehata</a>
+          </p>
+        </div>
+        <div class="header-actions" aria-label="Header controls">
+          <button
+            id="settingsButton"
+            class="icon-button"
+            type="button"
+            aria-label="Settings"
+            title="Settings"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4A2 2 0 0 0 4 9.9l.2.1a2 2 0 0 1 1 1.7v.6a2 2 0 0 1-1 1.7l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.7v-.6a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <button
+            id="themeButton"
+            class="icon-button"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3.5"/>
+              <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/>
+            </svg>
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.2 15.2A8.2 8.2 0 0 1 8.8 3.8 8.3 8.3 0 1 0 20.2 15.2Z"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section id="mainView" class="view">
+        <section class="overview-card" aria-labelledby="keyword-label">
+          <div class="metric">
+            <span class="eyebrow" id="keyword-label">Current Keyword</span>
+            <strong id="keywordValue" class="keyword-value">Detecting…</strong>
+          </div>
+          <div class="divider"></div>
+          <div class="metric">
+            <span class="eyebrow">Analyzed Results</span>
+            <strong id="resultCount">Analyzed 0 organic results</strong>
+          </div>
+        </section>
+
+        <button id="analyzeButton" class="button button-primary" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m21 21-4.6-4.6M10.8 18a7.2 7.2 0 1 0 0-14.4 7.2 7.2 0 0 0 0 14.4Z"/>
+          </svg>
+          <span>Analyze SERP</span>
+        </button>
+
+        <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
+
+        <section class="outputs" aria-labelledby="outputs-title">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">AI Suggestions</span>
+              <h2 id="outputs-title">Snippet preview</h2>
+            </div>
+          </div>
+
+          <article class="output-card">
+            <div class="output-card__header">
+              <h3>Suggested SEO Title</h3>
+              <button id="copyTitleButton" class="copy-button" type="button" disabled>Copy Title</button>
+            </div>
+            <p id="titleOutput" class="output-value is-placeholder" dir="auto">Waiting for AI generation...</p>
+          </article>
+
+          <article class="output-card">
+            <div class="output-card__header">
+              <h3>Suggested Meta Description</h3>
+              <button id="copyDescriptionButton" class="copy-button" type="button" disabled>Copy Description</button>
+            </div>
+            <p id="descriptionOutput" class="output-value is-placeholder" dir="auto">Waiting for AI generation...</p>
+          </article>
+
+          <article class="output-card">
+            <div class="output-card__header">
+              <h3>Suggested URL</h3>
+              <button id="copyUrlButton" class="copy-button" type="button" disabled>Copy URL</button>
+            </div>
+            <p id="urlOutput" class="output-value is-placeholder" dir="auto">Waiting for AI generation...</p>
+          </article>
+        </section>
+
+        <div class="button-grid" aria-label="Suggestion controls">
+          <button id="generateButton" class="button button-secondary" type="button">Generate Suggestions</button>
+          <button id="regenerateButton" class="button button-secondary" type="button" disabled>Regenerate</button>
+          <button id="copyAllButton" class="button button-quiet button-full" type="button" disabled>Copy All</button>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view settings-view" aria-labelledby="settingsTitle" hidden>
+        <button id="backButton" class="back-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          Back
+        </button>
+
+        <div class="settings-heading">
+          <span class="eyebrow">Settings</span>
+          <h2 id="settingsTitle">Gemini API configuration</h2>
+          <p>Your key is stored locally and is never shown again after saving.</p>
+        </div>
+
+        <div class="settings-card">
+          <label for="apiKeyInput">Gemini API Key</label>
+          <input
+            id="apiKeyInput"
+            type="password"
+            placeholder="Enter your Gemini API key"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+          >
+          <div id="keyState" class="key-state">No API key saved</div>
+
+          <div class="settings-actions">
+            <button id="saveKeyButton" class="button button-primary settings-primary" type="button">Save Key</button>
+            <button id="testConnectionButton" class="button button-secondary" type="button">Test Connection</button>
+            <button id="removeKeyButton" class="button button-danger" type="button">Remove Key</button>
+          </div>
+        </div>
+
+        <p id="settingsStatus" class="status-message settings-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <footer>
+        <span class="privacy-dot" aria-hidden="true"></span>
+        Your API key is stored only in this browser
+      </footer>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
