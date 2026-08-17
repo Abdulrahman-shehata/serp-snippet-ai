@@ -9,6 +9,7 @@ const EXTRACTION_MESSAGE = "SERP_SNIPPET_AI_EXTRACT";
 const GEMINI_TEST_MESSAGE = "SERP_SNIPPET_AI_TEST_GEMINI";
 const GEMINI_GENERATE_MESSAGE = "SERP_SNIPPET_AI_GENERATE";
 const PLACEHOLDER_TEXT = "Waiting for AI generation...";
+const MAX_VARIATION_HISTORY = 8;
 
 const elements = {
   mainView: document.querySelector("#mainView"),
@@ -44,6 +45,7 @@ let currentSuggestions = null;
 let hasConfiguredApiKey = false;
 let generationInProgress = false;
 let currentTheme = "light";
+let suggestionHistory = [];
 
 function getSystemTheme() {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -238,6 +240,11 @@ async function restoreLocalState(tab) {
   const savedSuggestions = suggestionsBelongToAnalysis(stored[SUGGESTIONS_STORAGE_KEY], storedAnalysis)
     ? stored[SUGGESTIONS_STORAGE_KEY]
     : null;
+  suggestionHistory = savedSuggestions ? [{
+    title: savedSuggestions.title,
+    description: savedSuggestions.description,
+    url: savedSuggestions.url
+  }] : [];
 
   renderCount(storedAnalysis?.results?.length || 0);
   renderSuggestions(savedSuggestions ? {
@@ -306,6 +313,7 @@ async function analyzeSerp() {
 
     await chrome.storage.local.set({ [ANALYSIS_STORAGE_KEY]: storedAnalysis });
     await chrome.storage.local.remove(SUGGESTIONS_STORAGE_KEY);
+    suggestionHistory = [];
     renderSuggestions(null);
     elements.keywordValue.textContent = storedAnalysis.keyword;
     elements.keywordValue.title = storedAnalysis.keyword;
@@ -403,10 +411,13 @@ async function generateSuggestions(isRegeneration = false) {
   setMainStatus("Gemini is analyzing the organic results…");
 
   try {
+    const previousOutputs = suggestionHistory.length
+      ? suggestionHistory
+      : currentSuggestions ? [currentSuggestions] : null;
     const response = await chrome.runtime.sendMessage({
       type: GEMINI_GENERATE_MESSAGE,
       analysis: storedAnalysis,
-      previousSuggestions: isRegeneration ? currentSuggestions : null
+      previousSuggestions: previousOutputs
     });
 
     if (!response?.ok && response?.code === "MISSING_API_KEY") {
@@ -419,9 +430,18 @@ async function generateSuggestions(isRegeneration = false) {
       throw new Error(response?.error || "Gemini could not complete the request. Please retry.");
     }
 
-    const suggestions = response.suggestions;
+    const suggestions = {
+      title: response.suggestions.title,
+      description: response.suggestions.description,
+      url: response.suggestions.url
+    };
+    const historyEntry = {
+      ...suggestions,
+      angle: typeof response.suggestions.angle === "string" ? response.suggestions.angle : ""
+    };
 
     renderSuggestions(suggestions);
+    suggestionHistory = [...suggestionHistory, historyEntry].slice(-MAX_VARIATION_HISTORY);
     await chrome.storage.local.set({
       [SUGGESTIONS_STORAGE_KEY]: {
         ...suggestions,
